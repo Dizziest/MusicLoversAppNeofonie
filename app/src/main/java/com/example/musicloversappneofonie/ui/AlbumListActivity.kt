@@ -1,10 +1,12 @@
-package com.example.musicloversappneofonie
+package com.example.musicloversappneofonie.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
+import com.example.musicloversappneofonie.R
 import com.example.musicloversappneofonie.adapters.AlbumAdapter
 import com.example.musicloversappneofonie.models.Album
 import com.example.musicloversappneofonie.viewmodels.AlbumListViewModel
@@ -12,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity() {
+class AlbumListActivity : AppCompatActivity() {
 
     private val viewModel: AlbumListViewModel by viewModel()
     private val adapter: AlbumAdapter by inject()
@@ -22,8 +24,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         subscribeObservers()
+        initSearchView()
         initRecyclerView()
 
+        showProgressBar(true)
         viewModel.getAlbums(1, "")
     }
 
@@ -48,10 +52,43 @@ class MainActivity : AppCompatActivity() {
         recycler_view.layoutManager = layoutManager
         recycler_view.adapter = adapter
 
+        recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)){
+                    showProgressBar(true)
+                    viewModel.searchNextPage()
+                }
+            }
+        })
     }
+
+    private fun initSearchView() {
+        search_view.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                showProgressBar(true)
+                viewModel.getAlbums(1, query)
+                search_view.clearFocus()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+    }
+
+    private fun showProgressBar(isVisible: Boolean){
+        if (isVisible){
+            progress_bar.visibility = View.VISIBLE
+        } else {
+            progress_bar.visibility = View.INVISIBLE
+        }
+    }
+
 
     private fun showAlbums(albums: List<Album>) {
         adapter.setAlbums(albums)
+        showProgressBar(false)
     }
 
     private fun showErrorMessage(message: String){

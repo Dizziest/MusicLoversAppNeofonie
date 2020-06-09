@@ -9,6 +9,6 @@ data class Album(
     val year: String,
     @SerializedName("title")
     val title: String,
-    @SerializedName("thumb")
+    @SerializedName("cover_image")
     val thumb: String
 )

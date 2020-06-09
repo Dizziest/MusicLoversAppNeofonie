@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.musicloversappneofonie.R
 import com.example.musicloversappneofonie.models.Album
 import kotlinx.android.synthetic.main.item_album.view.*
@@ -42,9 +43,16 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
         fun bind(album: Album){
             with(itemView){
-                Glide.with(this)
-                    .load(album.thumb)
-                    .into(image_view_album)
+                if (album.thumb.takeLast(10) == "spacer.gif" || album.thumb.isNullOrEmpty()){
+                    Glide.with(this)
+                        .load("https://upload.wikimedia.org/wikipedia/commons/b/b9/No_Cover.jpg")
+                        .into(image_view_album)
+                } else {
+                    Glide.with(this)
+                        .load(album.thumb)
+                        .into(image_view_album)
+                }
+
 
                 text_album_title.text = album.title + " " + "(" + album.year + ")"
             }
