@@ -1,4 +1,4 @@
-package com.example.musicloversappneofonie
+package com.example.musicloversappneofonie.app
 
 import android.app.Application
 import com.example.musicloversappneofonie.dependency_injection.appModule
