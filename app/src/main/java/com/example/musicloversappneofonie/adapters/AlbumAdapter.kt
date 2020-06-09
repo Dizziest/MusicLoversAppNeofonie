@@ -1,9 +1,13 @@
 package com.example.musicloversappneofonie.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.musicloversappneofonie.R
 import com.example.musicloversappneofonie.models.Album
+import kotlinx.android.synthetic.main.item_album.view.*
 
 class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
@@ -20,18 +24,31 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
         val itemView = LayoutInflater
             .from(parent.context)
-            .inflate()
+            .inflate(R.layout.item_album, parent, false)
+
+        return AlbumViewHolder(itemView)
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return albums.size
     }
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val album = albums[position]
+        holder.bind(album)
     }
 
-    class AlbumViewHolder {
+    class AlbumViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        fun bind(album: Album){
+            with(itemView){
+                Glide.with(this)
+                    .load(album.thumb)
+                    .into(image_view_album)
+
+                text_album_title.text = album.title + " " + "(" + album.year + ")"
+            }
+        }
 
     }
 }
