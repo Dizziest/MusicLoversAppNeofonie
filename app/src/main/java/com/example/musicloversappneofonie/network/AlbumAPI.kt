@@ -8,6 +8,7 @@ interface AlbumAPI {
 
     @GET("database/search?token=IrsroYIhcHxzBEckNvFyOLVFmYNvRCLsxaDgNjLu")
     suspend fun getAlbums(
+        @Query("query") query: String?,
         @Query("format") format: String,
         @Query("per_page") per_page: Int,
         @Query("page") page: Int

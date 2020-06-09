@@ -5,7 +5,7 @@ import com.example.musicloversappneofonie.network.AlbumAPI
 
 class AlbumRepository(private val api: AlbumAPI) {
 
-    suspend fun getAlbums(page: Int) : List<Album> {
-        return api.getAlbums("album", 20, page).results
+    suspend fun getAlbums(page: Int, query: String?) : List<Album> {
+        return api.getAlbums(query,"album", 20, page).results
     }
 }

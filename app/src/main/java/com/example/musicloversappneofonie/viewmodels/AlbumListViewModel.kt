@@ -22,10 +22,10 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
         return mError
     }
 
-    fun getAlbums(page: Int){
+    fun getAlbums(page: Int, query: String){
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO){
-                runCatching { repository.getAlbums(page) }
+                runCatching { repository.getAlbums(page, query) }
             }
             result.onSuccess { mAlbums.value = it }
             result.onFailure { mError.value = it }
