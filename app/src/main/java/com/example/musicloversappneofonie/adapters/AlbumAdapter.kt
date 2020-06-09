@@ -10,9 +10,10 @@ import com.example.musicloversappneofonie.R
 import com.example.musicloversappneofonie.models.Album
 import kotlinx.android.synthetic.main.item_album.view.*
 
-class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
+class AlbumAdapter(onAlbumListener: OnAlbumListener) : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
     private val albums by lazy { mutableListOf<Album>()}
+    private val onAlbumListener = onAlbumListener
 
     fun setAlbums(albums: List<Album>) {
         if (albums.isNotEmpty()){
@@ -27,7 +28,7 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
             .from(parent.context)
             .inflate(R.layout.item_album, parent, false)
 
-        return AlbumViewHolder(itemView)
+        return AlbumViewHolder(itemView, onAlbumListener)
     }
 
     override fun getItemCount(): Int {
@@ -39,7 +40,16 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
         holder.bind(album)
     }
 
-    class AlbumViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun getSelectedAlbum(position: Int): Album? {
+        if (albums != null && albums.isNotEmpty()){
+            return albums[position]
+        }
+        return null
+    }
+
+    class AlbumViewHolder(itemView: View, onAlbumListener: OnAlbumListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+
+        private val onAlbumListener = onAlbumListener
 
         fun bind(album: Album){
             with(itemView){
@@ -52,10 +62,13 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
                         .load(album.thumb)
                         .into(image_view_album)
                 }
-
-
                 text_album_title.text = album.title + " " + "(" + album.year + ")"
             }
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            onAlbumListener.onAlbumClick(adapterPosition)
         }
 
     }

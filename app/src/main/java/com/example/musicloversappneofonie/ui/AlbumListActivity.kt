@@ -1,5 +1,6 @@
 package com.example.musicloversappneofonie.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,17 +9,18 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicloversappneofonie.R
 import com.example.musicloversappneofonie.adapters.AlbumAdapter
+import com.example.musicloversappneofonie.adapters.OnAlbumListener
 import com.example.musicloversappneofonie.models.Album
 import com.example.musicloversappneofonie.viewmodels.AlbumListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class AlbumListActivity : AppCompatActivity() {
+class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
 
     private val viewModel: AlbumListViewModel by viewModel()
-    private val adapter: AlbumAdapter by inject()
     private val layoutManager: RecyclerView.LayoutManager by inject()
+    private val adapter = AlbumAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,5 +99,11 @@ class AlbumListActivity : AppCompatActivity() {
             "Error : $message",
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    override fun onAlbumClick(position: Int) {
+        val intent = Intent(this, AlbumActivity::class.java)
+        intent.putExtra("id", adapter.getSelectedAlbum(position)?.id)
+        startActivity(intent)
     }
 }
