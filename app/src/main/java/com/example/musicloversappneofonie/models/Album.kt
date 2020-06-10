@@ -14,5 +14,9 @@ data class Album(
     @SerializedName("title")
     val title: String,
     @SerializedName("cover_image")
-    val thumb: String
+    val thumb: String,
+    @SerializedName("thumb")
+    val thumb2: String,
+    @SerializedName("type")
+    val type: String
 )

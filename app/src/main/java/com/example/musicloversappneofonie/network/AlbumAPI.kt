@@ -40,4 +40,5 @@ interface AlbumAPI {
     suspend fun getReleasesByArtistId(
         @Path("id") id: Int
     ) : ReleasesResponse
+
 }

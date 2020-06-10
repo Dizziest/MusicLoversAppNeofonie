@@ -19,14 +19,16 @@ import com.example.musicloversappneofonie.viewmodels.AlbumViewModel
 import kotlinx.android.synthetic.main.activity_album.*
 import org.koin.android.ext.android.inject
 import org.koin.core.qualifier.named
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class AlbumActivity : AppCompatActivity(), View.OnClickListener {
 
+    private val viewModel: AlbumViewModel by viewModel()
     private val adapter: TrackAdapter by inject()
     private val chipAdapter: ChipAdapter by inject()
     private val layoutManager: LinearLayoutManager by inject()
     private val chipLayoutManager: LinearLayoutManager by inject(named("horizontal_manager"))
-    private val viewModel: AlbumViewModel by inject()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,7 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
             showAlbum(it)
             showTracks(it.tracklist)
             showChips(it.genres)
+            showProgressBar(false)
         }
     }
 
@@ -73,12 +76,24 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getIncomingIntent(){
+        showProgressBar(true)
         val id = intent.extras?.getInt("id")
-        val master_id = intent.extras?.getInt("master_id")
-        val resource_url = intent.extras?.getString("resource_url")
-        if (id != null && master_id != null && resource_url != null) {
-            viewModel.getReleaseIfCantGetAlbum(id, master_id, resource_url)
+        println(intent.extras?.getString("type"))
+        if (intent.extras?.containsKey("type")!!){
+            val type = intent.extras?.getString("type")
+            if (type == "release"){
+                id?.let { viewModel.getReleaseById(it) }
+            } else if (type == "master") {
+                id?.let { viewModel.getAlbumById(it) }
+            }
+        } else {
+            val masterId = intent.extras?.getInt("master_id")
+            val resourceUrl = intent.extras?.getString("resource_url")
+            if (id != null && masterId != null && resourceUrl != null) {
+                viewModel.getReleaseIfCantGetAlbum(id, masterId, resourceUrl)
+            }
         }
+
     }
 
     private fun showAlbum(album: DetailedAlbum){
@@ -108,6 +123,8 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
 
         arrow_button.setOnClickListener(this)
         card_artist.setOnClickListener(this)
+
+
     }
 
     private fun showTracks(tracks: List<Track>){
@@ -116,6 +133,14 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun showChips(chips: List<String>){
         chipAdapter.setChips(chips)
+    }
+
+    private fun showProgressBar(isVisible: Boolean){
+        if (isVisible){
+            album_progress_bar.visibility = View.VISIBLE
+        } else {
+            album_progress_bar.visibility = View.INVISIBLE
+        }
     }
 
     private fun onArtistCardClick(album: DetailedAlbum){

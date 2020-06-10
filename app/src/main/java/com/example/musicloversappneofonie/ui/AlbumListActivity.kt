@@ -16,8 +16,7 @@ import com.example.musicloversappneofonie.viewmodels.AlbumListViewModel
 import kotlinx.android.synthetic.main.activity_album.*
 import kotlinx.android.synthetic.main.activity_album_list.*
 import kotlinx.android.synthetic.main.activity_album_list.recycler_view
-import kotlinx.android.synthetic.main.item_album.*
-import kotlinx.android.synthetic.main.item_album.image_view_album
+
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 

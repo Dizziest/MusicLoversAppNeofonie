@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        app:cardElevation="5dp">
+        app:cardElevation="5dp"
+        android:layout_marginBottom="1dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -23,6 +24,7 @@
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
                 android:text="1." />
 
             <TextView
@@ -31,6 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/text_track_position"
+                android:layout_toLeftOf="@+id/text_track_duration"
                 android:text="@string/example_name" />
 
             <TextView
@@ -38,7 +41,8 @@
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
                 android:text="00:00" />
 
         </RelativeLayout>
