@@ -4,26 +4,31 @@ import com.example.musicloversappneofonie.models.Album
 import com.example.musicloversappneofonie.models.Artist
 import com.example.musicloversappneofonie.models.DetailedAlbum
 import com.example.musicloversappneofonie.network.AlbumAPI
+import com.example.musicloversappneofonie.responses.AlbumsResponse
+import com.example.musicloversappneofonie.responses.ReleasesResponse
+import io.reactivex.Observable
+import io.reactivex.Single
+import java.util.*
 
 class AlbumRepository(private val api: AlbumAPI) {
 
-    suspend fun getAlbums(page: Int, query: String?) : List<Album> {
-        return api.getAlbums(query,"album", 20, page).results
+    fun getAlbums(page: Int, query: String?) : Single<AlbumsResponse> {
+        return api.getAlbums(query,"album", 20, page)
     }
 
-    suspend fun getAlbumById(id: Int) : DetailedAlbum {
+    fun getAlbumById(id: Int) : Single<DetailedAlbum> {
         return api.getAlbumById(id)
     }
 
-    suspend fun getReleaseById(id: Int) : DetailedAlbum {
+    fun getReleaseById(id: Int) : Single<DetailedAlbum> {
         return api.getReleaseById(id)
     }
 
-    suspend fun getArtistById(id: Int) : Artist{
+    fun getArtistById(id: Int) : Single<Artist>{
         return api.getArtistById(id)
     }
 
-    suspend fun getReleasesByArtistId(id: Int): List<Album> {
-        return api.getReleasesByArtistId(id).releases
+    fun getReleasesByArtistId(id: Int): Single<ReleasesResponse> {
+        return api.getReleasesByArtistId(id)
     }
 }

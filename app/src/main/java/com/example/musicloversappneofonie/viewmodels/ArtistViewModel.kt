@@ -7,12 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.musicloversappneofonie.models.Album
 import com.example.musicloversappneofonie.models.Artist
 import com.example.musicloversappneofonie.repositories.AlbumRepository
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ArtistViewModel(private val repository: AlbumRepository) : ViewModel() {
 
+    private val disposable = CompositeDisposable()
     private val mArtist = MutableLiveData<Artist>()
     private val mReleases = MutableLiveData<List<Album>>()
     private val mError = MutableLiveData<Throwable>()
@@ -30,22 +34,16 @@ class ArtistViewModel(private val repository: AlbumRepository) : ViewModel() {
     }
 
     fun getArtistById(id: Int){
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO){
-                runCatching{ repository.getArtistById(id) }
-            }
-            result.onSuccess { mArtist.value = it }
-            result.onFailure { mError.value = it }
-        }
+        disposable.add(repository.getArtistById(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({response -> mArtist.value = response}, {t -> mError.value = t}))
     }
 
     fun getReleasesByArtistId(id: Int){
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO){
-                runCatching{ repository.getReleasesByArtistId(id) }
-            }
-            result.onSuccess { mReleases.value = it }
-            result.onFailure { mError.value = it }
-        }
+        disposable.add(repository.getReleasesByArtistId(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({response -> mReleases.value = response.releases}, {t -> mError.value = t}))
     }
 }

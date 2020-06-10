@@ -3,15 +3,16 @@ package com.example.musicloversappneofonie.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.musicloversappneofonie.models.DetailedAlbum
 import com.example.musicloversappneofonie.repositories.AlbumRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+
 
 class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
 
+    private val disposable = CompositeDisposable()
     private val mAlbum = MutableLiveData<DetailedAlbum>()
     private val mError = MutableLiveData<Throwable>()
 
@@ -24,23 +25,17 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
     }
 
     fun getAlbumById(id: Int){
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO){
-                runCatching { repository.getAlbumById(id) }
-            }
-            result.onSuccess { mAlbum.value = it }
-            result.onFailure { mError.value = it }
-        }
+        disposable.add(repository.getAlbumById(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({response -> mAlbum.value = response}, {t -> mError.value = t }))
     }
 
     fun getReleaseById(id: Int){
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO){
-                runCatching { repository.getReleaseById(id) }
-            }
-            result.onSuccess { mAlbum.value = it }
-            result.onFailure { mError.value = it }
-        }
+        disposable.add(repository.getReleaseById(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({response -> mAlbum.value = response}, {t -> mError.value = t}))
     }
 
     fun getReleaseIfCantGetAlbum(id: Int, master_id: Int, resource_url: String) {
