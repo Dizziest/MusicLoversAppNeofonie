@@ -14,5 +14,8 @@ data class DetailedAlbum(
     @SerializedName("artists")
     val artists: List<Artist>,
     @SerializedName("title")
-    val title: String
+    val title: String,
+    @SerializedName("images")
+    val images: List<Images>
+
 )

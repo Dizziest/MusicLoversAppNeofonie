@@ -7,6 +7,8 @@ data class Artist(
     val id: Int,
     @SerializedName("name")
     val name: String,
+    @SerializedName("thumbnail_url")
+    val thumb: String,
     @SerializedName("images")
     val images: List<Images>
 )

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicloversappneofonie.R
@@ -12,7 +13,11 @@ import com.example.musicloversappneofonie.adapters.AlbumAdapter
 import com.example.musicloversappneofonie.adapters.OnAlbumListener
 import com.example.musicloversappneofonie.models.Album
 import com.example.musicloversappneofonie.viewmodels.AlbumListViewModel
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_album.*
+import kotlinx.android.synthetic.main.activity_album_list.*
+import kotlinx.android.synthetic.main.activity_album_list.recycler_view
+import kotlinx.android.synthetic.main.item_album.*
+import kotlinx.android.synthetic.main.item_album.image_view_album
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -24,7 +29,7 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_album_list)
         subscribeObservers()
         initSearchView()
         initRecyclerView()
@@ -104,6 +109,8 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
     override fun onAlbumClick(position: Int) {
         val intent = Intent(this, AlbumActivity::class.java)
         intent.putExtra("id", adapter.getSelectedAlbum(position)?.id)
+        intent.putExtra("master_id", adapter.getSelectedAlbum(position)?.master_id)
+        intent.putExtra("resource_url", adapter.getSelectedAlbum(position)?.resource_url)
         startActivity(intent)
     }
 }
