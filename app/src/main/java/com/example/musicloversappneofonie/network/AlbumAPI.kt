@@ -1,8 +1,10 @@
 package com.example.musicloversappneofonie.network
 
+import com.example.musicloversappneofonie.models.Album
 import com.example.musicloversappneofonie.models.Artist
 import com.example.musicloversappneofonie.models.DetailedAlbum
 import com.example.musicloversappneofonie.responses.AlbumsResponse
+import com.example.musicloversappneofonie.responses.ReleasesResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -33,4 +35,9 @@ interface AlbumAPI {
     suspend fun getArtistById(
         @Path("id") id: Int
     ) : Artist
+
+    @GET("artists/{id}/releases?token=$API_KEY")
+    suspend fun getReleasesByArtistId(
+        @Path("id") id: Int
+    ) : ReleasesResponse
 }
