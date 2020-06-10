@@ -19,7 +19,10 @@ val appModule = module {
     factory { AlbumRepository(get()) }
 
     factory<RecyclerView.LayoutManager> { GridLayoutManager(androidContext(), 2) }
+    factory<RecyclerView.LayoutManager>(named("tablet_manager")) { GridLayoutManager(androidContext(), 3) }
+    factory<RecyclerView.LayoutManager>(named("landscape_manager")) { GridLayoutManager(androidContext(), 4) }
     factory { LinearLayoutManager(androidContext()) }
+
 
     factory(named("horizontal_manager")) { LinearLayoutManager(androidContext(), LinearLayoutManager.HORIZONTAL, false) }
     factory { TrackAdapter() }

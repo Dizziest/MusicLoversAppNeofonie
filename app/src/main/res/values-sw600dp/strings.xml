@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MusicLoversAppNeofonie</string>
+    <string name="example_name">Example name</string>
+    <string name="transition_avatar">avatar %d</string>
+</resources>

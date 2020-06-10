@@ -19,11 +19,14 @@ import kotlinx.android.synthetic.main.activity_album_list.recycler_view
 
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
 
 class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
 
     private val viewModel: AlbumListViewModel by viewModel()
     private val layoutManager: RecyclerView.LayoutManager by inject()
+    private val landscapeLayoutManager: RecyclerView.LayoutManager by inject(named("landscape_manager"))
+    private val tabletLayoutManager: RecyclerView.LayoutManager by inject(named("tablet_manager"))
     private val adapter = AlbumAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +35,6 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         subscribeObservers()
         initSearchView()
         initRecyclerView()
-
         showProgressBar(true)
         viewModel.getAlbums(1, "")
     }
@@ -54,8 +56,20 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         }
     }
 
+    private fun getProperManager() : RecyclerView.LayoutManager{
+        val isPhone = resources.getBoolean(R.bool.is_phone)
+        val isLandscape = resources.configuration.orientation
+        if (isPhone && isLandscape == 1){
+            return layoutManager
+        } else if (isPhone && isLandscape == 2) {
+            return landscapeLayoutManager
+        } else {
+            return tabletLayoutManager
+        }
+    }
+
     private fun initRecyclerView() {
-        recycler_view.layoutManager = layoutManager
+        recycler_view.layoutManager = getProperManager()
         recycler_view.adapter = adapter
 
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener(){

@@ -33,7 +33,7 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album)
-        initRecyclerView()
+        phoneInitRecyclerView()
         getIncomingIntent()
         subscribeObservers()
     }
@@ -67,7 +67,7 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    private fun initRecyclerView(){
+    private fun phoneInitRecyclerView(){
         recycler_view.layoutManager = layoutManager
         recycler_view.adapter = adapter
 
