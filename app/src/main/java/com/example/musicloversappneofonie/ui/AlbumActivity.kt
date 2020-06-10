@@ -1,5 +1,6 @@
 package com.example.musicloversappneofonie.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -106,6 +107,7 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
         text_artist.text = album.artists[0].name
 
         arrow_button.setOnClickListener(this)
+        card_artist.setOnClickListener(this)
     }
 
     private fun showTracks(tracks: List<Track>){
@@ -116,15 +118,30 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
         chipAdapter.setChips(chips)
     }
 
+    private fun onArtistCardClick(album: DetailedAlbum){
+        val intent = Intent(this, ArtistActivity::class.java)
+        intent.putExtra("artist_id", album.artists[0].id)
+        startActivity(intent)
+    }
+
     override fun onClick(v: View?) {
-        if (expandable_view.visibility == View.GONE) {
-            TransitionManager.beginDelayedTransition(card_view, AutoTransition())
-            expandable_view.visibility = View.VISIBLE
-            arrow_button.setBackgroundResource(R.drawable.ic_keyboard_arrow_up_black_24dp)
-        } else {
-            TransitionManager.beginDelayedTransition(card_view, AutoTransition())
-            expandable_view.visibility = View.GONE
-            arrow_button.setBackgroundResource(R.drawable.ic_keyboard_arrow_down_black_24dp)
+
+        when(v?.id){
+            R.id.arrow_button -> {
+                if (expandable_view.visibility == View.GONE) {
+                    TransitionManager.beginDelayedTransition(card_view, AutoTransition())
+                    expandable_view.visibility = View.VISIBLE
+                    arrow_button.setBackgroundResource(R.drawable.ic_keyboard_arrow_up_black_24dp)
+                } else {
+                    TransitionManager.beginDelayedTransition(card_view, AutoTransition())
+                    expandable_view.visibility = View.GONE
+                    arrow_button.setBackgroundResource(R.drawable.ic_keyboard_arrow_down_black_24dp)
+                }
+            }
+
+            R.id.card_artist -> {
+                viewModel.getAlbumLiveData().value?.let { onArtistCardClick(it) }
+            }
         }
     }
 }
