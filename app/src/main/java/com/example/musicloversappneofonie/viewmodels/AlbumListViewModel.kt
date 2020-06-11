@@ -31,6 +31,10 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
         return mIsQueryExhausted
     }
 
+    fun onViewCreated(){
+        getAlbums(1, "")
+    }
+
     fun getAlbums(page: Int, query: String?){
         mIsQueryExhausted.value = false
         pageNumber = page

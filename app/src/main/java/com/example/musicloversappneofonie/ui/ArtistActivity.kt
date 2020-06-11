@@ -7,7 +7,6 @@ import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
 import android.widget.Toast
-import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -17,7 +16,6 @@ import com.example.musicloversappneofonie.adapters.OnAlbumListener
 import com.example.musicloversappneofonie.models.Album
 import com.example.musicloversappneofonie.models.Artist
 import com.example.musicloversappneofonie.viewmodels.ArtistViewModel
-import kotlinx.android.synthetic.main.activity_album.*
 import kotlinx.android.synthetic.main.activity_artist.*
 import kotlinx.android.synthetic.main.activity_artist.arrow_button
 import kotlinx.android.synthetic.main.activity_artist.card_view
@@ -139,6 +137,7 @@ class ArtistActivity : AppCompatActivity(), View.OnClickListener, OnAlbumListene
         val intent = Intent(this, AlbumActivity::class.java)
         intent.putExtra("id", adapter.getSelectedAlbum(position)?.id)
         intent.putExtra("type", adapter.getSelectedAlbum(position)?.type)
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
     }
 }

@@ -36,7 +36,7 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         initSearchView()
         initRecyclerView()
         showProgressBar(true)
-        viewModel.getAlbums(1, "")
+        viewModel.onViewCreated()
     }
 
     private fun subscribeObservers(){
@@ -124,6 +124,7 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         intent.putExtra("id", adapter.getSelectedAlbum(position)?.id)
         intent.putExtra("master_id", adapter.getSelectedAlbum(position)?.master_id)
         intent.putExtra("resource_url", adapter.getSelectedAlbum(position)?.resource_url)
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
     }
 }
