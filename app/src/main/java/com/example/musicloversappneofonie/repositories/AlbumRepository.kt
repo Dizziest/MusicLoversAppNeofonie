@@ -4,11 +4,12 @@ import com.example.musicloversappneofonie.models.Album
 import com.example.musicloversappneofonie.models.Artist
 import com.example.musicloversappneofonie.models.DetailedAlbum
 import com.example.musicloversappneofonie.network.AlbumAPI
+import com.example.musicloversappneofonie.responses.AlbumsResponse
 
 class AlbumRepository(private val api: AlbumAPI) {
 
-    suspend fun getAlbums(page: Int, query: String?) : List<Album> {
-        return api.getAlbums(query,"album", 20, page).results
+    suspend fun getAlbums(page: Int, query: String?) : AlbumsResponse {
+        return api.getAlbums(query,"album", 20, page)
     }
 
     suspend fun getAlbumById(id: Int) : DetailedAlbum {
