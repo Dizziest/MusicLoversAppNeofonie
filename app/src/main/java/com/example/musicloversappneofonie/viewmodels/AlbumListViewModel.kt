@@ -68,7 +68,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
             }
         }
     }
-    
+
     private fun checkLastQuery(pages: Int, page: Int){
         mIsQueryExhausted.value = page >= pages
     }

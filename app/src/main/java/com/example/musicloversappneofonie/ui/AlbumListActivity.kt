@@ -36,7 +36,7 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         initSearchView()
         initRecyclerView()
         showProgressBar(true)
-        viewModel.getAlbums(1, "")
+        viewModel.onViewCreated()
     }
 
     private fun subscribeObservers(){
