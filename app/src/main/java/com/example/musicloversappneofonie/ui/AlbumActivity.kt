@@ -34,8 +34,13 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album)
         phoneInitRecyclerView()
-        getIncomingIntent()
+        getIncomingIntent(intent)
         subscribeObservers()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let { getIncomingIntent(it) }
     }
 
     private fun subscribeObservers(){
@@ -75,10 +80,9 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
         chip_recycler_view.adapter = chipAdapter
     }
 
-    private fun getIncomingIntent(){
+    private fun getIncomingIntent(intent: Intent){
         showProgressBar(true)
         val id = intent.extras?.getInt("id")
-        println(intent.extras?.getString("type"))
         if (intent.extras?.containsKey("type")!!){
             val type = intent.extras?.getString("type")
             if (type == "release"){
@@ -146,6 +150,7 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
     private fun onArtistCardClick(album: DetailedAlbum){
         val intent = Intent(this, ArtistActivity::class.java)
         intent.putExtra("artist_id", album.artists[0].id)
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
     }
 
