@@ -18,6 +18,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
     private val mIsQueryExhausted = MutableLiveData<Boolean>()
     var pageNumber = 1
     var mQuery: String? = ""
+    var pages = 0
 
     fun getAlbumsLiveData() : LiveData<List<Album>> {
         return mAlbums
@@ -44,7 +45,8 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({response -> run {
                 mAlbums.value = response.results
-                checkLastQuery(mAlbums.value?.toList())
+                pages = response.pagination.pages
+                checkLastQuery(pages, pageNumber)
             }}, {t -> mError.value = t}))
     }
 
@@ -57,7 +59,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({response -> run {
                     mAlbums.value = response.results
-                    checkLastQuery(mAlbums.value?.toList())
+                    checkLastQuery(pages, pageNumber)
                     mAlbums.value?.let { currentAlbums?.addAll(it) }
                     mAlbums.postValue(currentAlbums)
                     pageNumber++
@@ -65,16 +67,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
         }
     }
 
-    // API sometimes returns 19 albums on page instead of 20, so the function tells
-    // app that the query is exhausted despite the fact that there are more albums
-    // to retrieve.
-    private fun checkLastQuery(albums: List<Album>?){
-        if (albums != null){
-            if (albums.size % 20 != 0){
-                mIsQueryExhausted.value = true
-            }
-        } else {
-            mIsQueryExhausted.value = true
-        }
+    private fun checkLastQuery(pages: Int, page: Int){
+        mIsQueryExhausted.value = page >= pages
     }
 }
