@@ -14,6 +14,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
     private val mAlbums = MutableLiveData<List<Album>>()
     private val mError = MutableLiveData<Throwable>()
     private val mIsQueryExhausted = MutableLiveData<Boolean>()
+    private val mIsLoading = MutableLiveData<Boolean>()
     var pageNumber = 1
     var mQuery: String? = ""
     var pages = 0
@@ -26,8 +27,12 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
         return mError
     }
 
-    fun isQueryExhausted() : LiveData<Boolean>{
+    fun isQueryExhausted() : LiveData<Boolean> {
         return mIsQueryExhausted
+    }
+
+    fun isLoading() : LiveData<Boolean> {
+        return mIsLoading
     }
 
     fun onViewCreated(){
@@ -39,6 +44,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
         pageNumber = page
         mQuery = query
         viewModelScope.launch {
+            mIsLoading.value = true
             val result = withContext(Dispatchers.IO){
                 runCatching { repository.getAlbums(page, query) }
             }
@@ -47,7 +53,8 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
                 pages = it.pagination.pages
             }
             result.onFailure { mError.value = it }
-            checkLastQuery(pages, pageNumber)
+            checkLastQuery(pages, page)
+            mIsLoading.value = false
         }
     }
 
@@ -55,6 +62,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
         if (!isQueryExhausted().value!!){
             var currentAlbums: MutableList<Album>? = mAlbums.value?.toMutableList()
             viewModelScope.launch {
+                mIsLoading.value = true
                 val result = withContext(Dispatchers.IO) {
                     runCatching { repository.getAlbums(pageNumber + 1, mQuery) }
                 }
@@ -65,6 +73,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
                 mAlbums.value?.let { currentAlbums?.addAll(it) }
                 mAlbums.postValue(currentAlbums)
                 pageNumber++
+                mIsLoading.value = false
             }
         }
     }

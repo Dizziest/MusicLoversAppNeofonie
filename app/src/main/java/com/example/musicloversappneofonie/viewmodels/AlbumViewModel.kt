@@ -14,6 +14,7 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
 
     private val mAlbum = MutableLiveData<DetailedAlbum>()
     private val mError = MutableLiveData<Throwable>()
+    private val mIsLoading = MutableLiveData<Boolean>()
 
     fun getAlbumLiveData(): LiveData<DetailedAlbum> {
         return mAlbum
@@ -23,23 +24,31 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
         return mError
     }
 
+    fun isLoading() : LiveData<Boolean> {
+        return mIsLoading
+    }
+
     fun getAlbumById(id: Int){
         viewModelScope.launch {
+            mIsLoading.value = true
             val result = withContext(Dispatchers.IO){
                 runCatching { repository.getAlbumById(id) }
             }
             result.onSuccess { mAlbum.value = it }
             result.onFailure { mError.value = it }
+            mIsLoading.value = false
         }
     }
 
     fun getReleaseById(id: Int){
+        mIsLoading.value = true
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO){
                 runCatching { repository.getReleaseById(id) }
             }
             result.onSuccess { mAlbum.value = it }
             result.onFailure { mError.value = it }
+            mIsLoading.value = false
         }
     }
 

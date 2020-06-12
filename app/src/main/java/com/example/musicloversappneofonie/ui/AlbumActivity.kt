@@ -40,12 +40,13 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent?.let { getIncomingIntent(it) }
+        intent?.let { getIncomingIntent(intent) }
     }
 
     private fun subscribeObservers(){
         observeAlbum()
         observeError()
+        observeLoading()
     }
 
     private fun observeAlbum(){
@@ -53,13 +54,18 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
             showAlbum(it)
             showTracks(it.tracklist)
             showChips(it.genres)
-            showProgressBar(false)
         }
     }
 
     private fun observeError(){
         viewModel.getErrorLiveData().observe(this){throwable ->
             throwable.message?.let { showErrorMessage(it) }
+        }
+    }
+
+    private fun observeLoading(){
+        viewModel.isLoading().observe(this){
+            showProgressBar(it)
         }
     }
 
@@ -81,7 +87,6 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getIncomingIntent(intent: Intent){
-        showProgressBar(true)
         val id = intent.extras?.getInt("id")
         if (intent.extras?.containsKey("type")!!){
             val type = intent.extras?.getString("type")
@@ -94,6 +99,7 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
             val masterId = intent.extras?.getInt("master_id")
             val resourceUrl = intent.extras?.getString("resource_url")
             if (id != null && masterId != null && resourceUrl != null) {
+                println("XDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
                 viewModel.getReleaseIfCantGetAlbum(id, masterId, resourceUrl)
             }
         }
@@ -152,6 +158,7 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
         intent.putExtra("artist_id", album.artists[0].id)
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
+        finish()
     }
 
     override fun onClick(v: View?) {
