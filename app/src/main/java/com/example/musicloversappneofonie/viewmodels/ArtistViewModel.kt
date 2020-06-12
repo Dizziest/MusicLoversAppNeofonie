@@ -20,6 +20,7 @@ class ArtistViewModel(private val repository: AlbumRepository) : ViewModel() {
     private val mArtist = MutableLiveData<Artist>()
     private val mReleases = MutableLiveData<List<Album>>()
     private val mError = MutableLiveData<Throwable>()
+    private val mIsLoading = MutableLiveData<Boolean>()
 
     fun getArtistLiveData() : LiveData<Artist> {
         return mArtist
@@ -33,17 +34,29 @@ class ArtistViewModel(private val repository: AlbumRepository) : ViewModel() {
         return mError
     }
 
+    fun isLoading() : LiveData<Boolean>{
+        return mIsLoading
+    }
+
     fun getArtistById(id: Int){
+        mIsLoading.value = true
         disposable.add(repository.getArtistById(id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({response -> mArtist.value = response}, {t -> mError.value = t}))
+            .subscribe({response -> run{
+                mArtist.value = response
+                mIsLoading.value = false
+            }}, {t -> mError.value = t}))
     }
 
     fun getReleasesByArtistId(id: Int){
+        mIsLoading.value = true
         disposable.add(repository.getReleasesByArtistId(id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({response -> mReleases.value = response.releases}, {t -> mError.value = t}))
+            .subscribe({response -> run{
+                mReleases.value = response.releases
+                mIsLoading.value = false
+            }}, {t -> mError.value = t}))
     }
 }

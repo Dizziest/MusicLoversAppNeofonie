@@ -16,6 +16,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
     private val mAlbums = MutableLiveData<List<Album>>()
     private val mError = MutableLiveData<Throwable>()
     private val mIsQueryExhausted = MutableLiveData<Boolean>()
+    private val mIsLoading = MutableLiveData<Boolean>()
     var pageNumber = 1
     var mQuery: String? = ""
     var pages = 0
@@ -32,6 +33,10 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
         return mIsQueryExhausted
     }
 
+    fun isLoading() : LiveData<Boolean>{
+        return mIsLoading
+    }
+
     fun onViewCreated(){
         getAlbums(1, "")
     }
@@ -40,6 +45,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
         mIsQueryExhausted.value = false
         pageNumber = page
         mQuery = query
+        mIsLoading.value = true
         disposable.add(repository.getAlbums(page, query)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -47,13 +53,14 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
                 mAlbums.value = response.results
                 pages = response.pagination.pages
                 checkLastQuery(pages, pageNumber)
+                mIsLoading.value = false
             }}, {t -> mError.value = t}))
     }
 
     fun searchNextPage(){
-        println(isQueryExhausted().value)
         if (!isQueryExhausted().value!!){
             var currentAlbums: MutableList<Album>? = mAlbums.value?.toMutableList()
+            mIsLoading.value = true
             disposable.add(repository.getAlbums(pageNumber + 1, mQuery)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -63,6 +70,7 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
                     mAlbums.value?.let { currentAlbums?.addAll(it) }
                     mAlbums.postValue(currentAlbums)
                     pageNumber++
+                    mIsLoading.value = false
                 }}, { t -> mError.value = t}))
         }
     }

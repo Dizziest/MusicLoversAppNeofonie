@@ -47,20 +47,27 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
     private fun subscribeObservers(){
         observeAlbum()
         observeError()
+        observeLoading()
     }
+
 
     private fun observeAlbum(){
         viewModel.getAlbumLiveData().observe(this){
             showAlbum(it)
             showTracks(it.tracklist)
             showChips(it.genres)
-            showProgressBar(false)
         }
     }
 
     private fun observeError(){
         viewModel.getErrorLiveData().observe(this){throwable ->
             throwable.message?.let { showErrorMessage(it) }
+        }
+    }
+
+    private fun observeLoading(){
+        viewModel.isLoading().observe(this){
+            showProgressBar(it)
         }
     }
 
@@ -82,7 +89,6 @@ class AlbumActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getIncomingIntent(intent: Intent){
-        showProgressBar(true)
         val id = intent.extras?.getInt("id")
         println(intent.extras?.getString("type"))
         if (intent.extras?.containsKey("type")!!){

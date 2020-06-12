@@ -43,11 +43,11 @@ class ArtistActivity : AppCompatActivity(), View.OnClickListener, OnAlbumListene
         observeArtist()
         observeReleases()
         observeError()
+        observeLoading()
     }
 
     private fun observeArtist(){
         viewModel.getArtistLiveData().observe(this){
-            showProgressBar(true)
             showArtist(it)
         }
     }
@@ -61,6 +61,12 @@ class ArtistActivity : AppCompatActivity(), View.OnClickListener, OnAlbumListene
     private fun observeError(){
         viewModel.getErrorLiveData().observe(this){throwable ->
             throwable.message?.let { showErrorMessage(it) }
+        }
+    }
+
+    private fun observeLoading(){
+        viewModel.isLoading().observe(this){
+            showProgressBar(it)
         }
     }
 
@@ -109,7 +115,6 @@ class ArtistActivity : AppCompatActivity(), View.OnClickListener, OnAlbumListene
         text_artist_name.text = artist.name
         arrow_button.setOnClickListener(this)
 
-        showProgressBar(false)
     }
 
     private fun showReleases(releases: List<Album>){
@@ -137,7 +142,6 @@ class ArtistActivity : AppCompatActivity(), View.OnClickListener, OnAlbumListene
         val intent = Intent(this, AlbumActivity::class.java)
         intent.putExtra("id", adapter.getSelectedAlbum(position)?.id)
         intent.putExtra("type", adapter.getSelectedAlbum(position)?.type)
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
     }
 }

@@ -35,13 +35,13 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         subscribeObservers()
         initSearchView()
         initRecyclerView()
-        showProgressBar(true)
         viewModel.onViewCreated()
     }
 
     private fun subscribeObservers(){
         observeAlbums()
         observeErrors()
+        observeLoading()
     }
 
     private fun observeAlbums(){
@@ -53,6 +53,12 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
     private fun observeErrors(){
         viewModel.getErrorLiveData().observe(this){ throwable ->
             throwable.message?.let { showErrorMessage(it) }
+        }
+    }
+
+    private fun observeLoading(){
+        viewModel.isLoading().observe(this){
+            showProgressBar(it)
         }
     }
 
@@ -75,7 +81,6 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1)){
-                    showProgressBar(true)
                     viewModel.searchNextPage()
                 }
             }
@@ -85,7 +90,6 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
     private fun initSearchView() {
         search_view.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                showProgressBar(true)
                 viewModel.getAlbums(1, query)
                 search_view.clearFocus()
                 return false
@@ -108,7 +112,6 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
 
     private fun showAlbums(albums: List<Album>) {
         adapter.setAlbums(albums)
-        showProgressBar(false)
     }
 
     private fun showErrorMessage(message: String){
@@ -124,7 +127,6 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         intent.putExtra("id", adapter.getSelectedAlbum(position)?.id)
         intent.putExtra("master_id", adapter.getSelectedAlbum(position)?.master_id)
         intent.putExtra("resource_url", adapter.getSelectedAlbum(position)?.resource_url)
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
     }
 }
