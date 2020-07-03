@@ -35,7 +35,6 @@ class AlbumListActivity : AppCompatActivity(), OnAlbumListener {
         subscribeObservers()
         initSearchView()
         initRecyclerView()
-        viewModel.onViewCreated()
     }
 
     private fun subscribeObservers(){

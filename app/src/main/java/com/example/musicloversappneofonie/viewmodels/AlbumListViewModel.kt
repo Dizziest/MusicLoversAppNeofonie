@@ -11,7 +11,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() {
-    private val mAlbums = MutableLiveData<List<Album>>()
+
+    private val mAlbums: MutableLiveData<List<Album>> by lazy {
+        MutableLiveData<List<Album>>()
+            .also{ getAlbums(1, "") }
+    }
     private val mError = MutableLiveData<Throwable>()
     private val mIsQueryExhausted = MutableLiveData<Boolean>()
     private val mIsLoading = MutableLiveData<Boolean>()
@@ -33,10 +37,6 @@ class AlbumListViewModel(private val repository: AlbumRepository) : ViewModel() 
 
     fun isLoading() : LiveData<Boolean> {
         return mIsLoading
-    }
-
-    fun onViewCreated(){
-        getAlbums(1, "")
     }
 
     fun getAlbums(page: Int, query: String?){
